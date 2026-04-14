@@ -1,0 +1,255 @@
+#pragma once
+#include "GUIStuff/GUIManager.hpp"
+#include "DrawData.hpp"
+#include "Helpers/FileDownloader.hpp"
+#include <filesystem>
+#include <modules/skparagraph/include/Paragraph.h>
+#include <nlohmann/json.hpp>
+#include <Helpers/Serializers.hpp>
+#include <SDL3/SDL_dialog.h>
+#include <Helpers/VersionNumber.hpp>
+
+class MainProgram;
+
+class Toolbar {
+    public:
+        struct LogMessage {
+            std::string text;
+            enum {
+                COLOR_NORMAL = 0,
+                COLOR_ERROR
+            } color;
+            TimePoint time;
+        };
+
+        struct ChatMessage {
+            std::string name;
+            std::string message;
+            enum Type {
+                NORMAL = 0,
+                JOIN 
+            } type;
+            TimePoint time;
+        };
+
+        struct ExtensionFilter {
+            std::string name;
+            std::string extensions;
+        };
+
+        std::string chatMessageInput;
+
+        Toolbar(MainProgram& initMain);
+        void initialize_io_before_update();
+        void update();
+        void draw(SkCanvas* canvas);
+        void color_selector_left(Vector4f* color);
+        void color_selector_right(Vector4f* color);
+        void paint_popup(Vector2f popupPos);
+
+        typedef std::function<void(const std::filesystem::path&, const ExtensionFilter& extensionSelected)> OpenFileSelectorCallback;
+        void open_file_selector(const std::string& filePickerName, const std::vector<ExtensionFilter>& extensionFilters, OpenFileSelectorCallback postSelectionFunc, const std::string& fileName = "", bool isSaving = false);
+        void save_func();
+        void save_as_func();
+        std::filesystem::path& file_selector_path();
+        std::shared_ptr<GUIStuff::UpdateInputData> io;
+        GUIStuff::GUIManager gui;
+
+        nlohmann::json get_config_json();
+        void set_config_json(const nlohmann::json& j, VersionNumber version);
+
+        void save_palettes();
+        void load_palettes();
+        void save_theme();
+        bool load_theme();
+        void load_licenses();
+
+        double dragZoomSpeed = 0.02;
+        double scrollZoomSpeed = 0.4;
+        float jumpTransitionTime = 0.5f;
+        Vector4f jumpTransitionEasing{0.75, 0.25, 0.25, 0.75};
+        bool viewWebVersionWelcome = false;
+
+        struct TabletOptions {
+            bool pressureAffectsBrushWidth = true;
+            float smoothingSamplingTime = 0.04f;
+            uint8_t middleClickButton = 1;
+            uint8_t rightClickButton = 2;
+            bool ignoreMouseMovementWhenPenInProximity = false;
+            float brushMinimumSize = 0.0f;
+            bool zoomWhilePenDownAndButtonHeld = true;
+        } tabletOptions;
+
+        Vector4f* colorLeft = nullptr;
+        Vector4f* colorRight = nullptr;
+        bool isUpdatingColorLeft = false;
+        bool isUpdatingColorRight = false;
+
+        std::optional<Vector2f> rightClickPopupLocation;
+
+        bool flipZoomToolDirection = false;
+
+        float final_gui_scale();
+
+        bool app_close_requested();
+    private:
+        void calculate_final_gui_scale();
+        float final_gui_scale_not_fit();
+
+        static void sdl_open_file_dialog_callback(void* userData, const char * const * fileList, int filter);
+
+        void reload_theme_list();
+        void player_list();
+        void chat_box();
+        void global_log();
+        void top_toolbar();
+        void grid_menu(bool justOpened);
+        void stop_displaying_grid_menu();
+        void bookmark_menu(bool justOpened);
+        void layer_menu(bool justOpened);
+        void drawing_program_gui();
+        void options_menu();
+        void file_picker_gui();
+        void performance_metrics();
+        bool color_palette(const char* id, Vector4f* color, bool& hoveringOnDropdown);
+        void open_world_file(bool isClient, const std::string& netSource, const std::string& serverLocalID);
+        void load_default_palette();
+        void load_default_theme();
+        void about_menu_gui();
+        void web_version_welcome();
+        void still_connecting_center_message();
+        void no_layers_being_edited_message();
+        void close_popup_gui();
+        void add_world_to_close_popup_data(const std::shared_ptr<World>& w);
+
+        struct ClosePopupData {
+            struct CloseWorldData {
+                std::weak_ptr<World> w;
+                bool setToSave = true;
+            };
+            std::vector<CloseWorldData> worldsToClose; // Using a vector to ensure that the worlds are in proper order
+            bool closeAppWhenDone = false;
+        } closePopupData;
+
+        #ifndef __EMSCRIPTEN__
+        void update_notification_gui();
+        void update_notification_check();
+        struct UpdateCheckerData {
+            bool checkForUpdates = true;
+            bool showGui = false;
+            bool updateCheckDone = false;
+            std::string newVersionStr;
+            std::shared_ptr<FileDownloader::DownloadData> versionFile;
+        } updateCheckerData;
+        #endif
+
+        std::string ownLicenseText;
+        std::vector<std::pair<std::string, std::string>> thirdPartyLicenses;
+        int selectedLicense = -1;
+
+        std::string downloadNameSet;
+
+        struct PaletteData {
+            struct Palette {
+                std::string name;
+                std::vector<Vector3f> colors;
+                NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(Palette, name, colors)
+            };
+
+            size_t selectedPalette = 0;
+            int selectedColor = -1;
+            std::vector<Palette> palettes;
+            bool addingPalette = false;
+            std::string newPaletteStr;
+        } paletteData;
+
+        struct ThemeData {
+            std::vector<std::string> themeDirList;
+            std::optional<size_t> selectedThemeIndex;
+            std::string themeCurrentlyLoaded = "Default";
+            bool openedSaveAsMenu = false;
+        } themeData;
+
+        bool justAssignedColorLeft = false;
+        bool justAssignedColorRight = false;
+
+        bool showPerformance = false;
+
+        bool menuPopUpOpen = false;
+        bool optionsMenuOpen = false;
+        bool playerMenuOpen = false;
+
+        float guiScale = 1.0f;
+        float finalCalculatedGuiScale = 1.0f;
+
+        enum {
+            CHATBOXSTATE_OPEN,
+            CHATBOXSTATE_JUSTOPEN,
+            CHATBOXSTATE_CLOSE
+        } chatBoxState = CHATBOXSTATE_CLOSE;
+
+        enum OptionsMenuType {
+            HOST_MENU,
+            CONNECT_MENU,
+            GENERAL_SETTINGS_MENU,
+            LOBBY_INFO_MENU,
+            CANVAS_SETTINGS_MENU,
+            SET_DOWNLOAD_NAME,
+            ABOUT_MENU
+        } optionsMenuType;
+        enum GeneralSettingsOptions {
+            GSETTINGS_GENERAL = 0,
+            GSETTINGS_TABLET,
+            GSETTINGS_THEME,
+            GSETTINGS_KEYBINDS,
+            GSETTINGS_DEBUG
+        } generalSettingsOptions = GSETTINGS_GENERAL;
+
+        bool bookmarkMenuPopupOpen = false;
+        bool layerMenuPopupOpen = false;
+
+        struct GridMenu {
+            bool popupOpen = false;
+            std::string newName;
+            uint32_t selectedGrid = std::numeric_limits<uint32_t>::max();
+        } gridMenu;
+
+        bool useNativeFilePicker = true;
+        struct FilePicker {
+            bool isOpen = false;
+            std::string filePickerWindowName;
+            std::vector<ExtensionFilter> extensionFiltersComplete;
+            std::vector<std::string> extensionFilters;
+            std::vector<std::filesystem::path> entries;
+            bool refreshEntries = true;
+            std::filesystem::path currentSearchPath;
+            std::filesystem::path currentSelectedPath;
+            std::string fileName;
+            size_t extensionSelected;
+            OpenFileSelectorCallback postSelectionFunc;
+        } filePicker;
+
+        struct NativeFilePicker {
+            std::atomic<bool> isOpen = false;
+            std::vector<ExtensionFilter> extensionFiltersComplete;
+            std::vector<SDL_DialogFileFilter> sdlFileFilters;
+            OpenFileSelectorCallback postSelectionFunc;
+        };
+        static NativeFilePicker nativeFilePicker;
+
+        std::optional<unsigned> keybindWaiting;
+
+        std::filesystem::path testing;
+
+        std::unique_ptr<skia::textlayout::Paragraph> build_paragraph_from_chat_message(const ChatMessage& message, float alpha);
+
+        void start_gui();
+        void end_gui();
+
+        void load_icons_at(const std::filesystem::path& pathToLoad);
+
+        std::string serverToConnectTo;
+        std::string serverLocalID;
+
+        MainProgram& main;
+};

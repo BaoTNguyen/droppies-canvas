@@ -1,0 +1,139 @@
+id: com.infinipaint.infinipaint
+runtime: org.freedesktop.Platform
+runtime-version: '25.08'
+sdk: org.freedesktop.Sdk
+command: infinipaint
+build-options:
+  build-args:
+    - --share=network
+modules:
+  - name: ICU
+    buildsystem: simple
+    subdir: source
+    build-commands:
+      - chmod +x runConfigureICU configure install-sh
+      - ./runConfigureICU Linux --prefix=/app --disable-icu-config --disable-icuio --disable-extras --disable-tools --disable-tests --disable-samples --disable-layoutex --disable-layout
+      - make -j$(nproc)
+      - make install
+    sources:
+      - type: archive
+        url: https://github.com/unicode-org/icu/releases/download/release-77-1/icu4c-77_1-src.tgz
+        sha256: 588e431f77327c39031ffbb8843c0e3bc122c211374485fa87dc5f3faff24061
+  - name: zstd
+    buildsystem: cmake-ninja
+    subdir: build/cmake
+    sources:
+      - type: git
+        tag: v1.5.7
+        url: https://github.com/facebook/zstd.git
+  - name: libdatachannel
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DNO_MEDIA=ON
+      - -DCMAKE_BUILD_TYPE=Release
+    sources:
+      - type: git
+        tag: v0.23.2
+        url: https://github.com/paullouisageneau/libdatachannel.git
+  - name: oneTBB
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DTBB_TEST=OFF
+    sources:
+      - type: git
+        tag: v2022.0.0
+        url: https://github.com/uxlfoundation/oneTBB.git
+  - name: SDL3
+    buildsystem: cmake-ninja
+    config-opts:
+        - -DCMAKE_BUILD_TYPE=Release
+        - -DSDL_SHARED=ON
+        - -DSDL_STATIC=OFF
+        - -DSDL_TEST_LIBRARY=OFF
+        - -DSDL_TESTS=OFF
+        - -DSDL_DISABLE_INSTALL_DOCS=OFF
+        - -DSDL_INSTALL_TESTS=OFF
+        - -DSDL_WAYLAND=OFF
+        - -DSDL_X11=ON
+    sources:
+      - type: git
+        tag: release-3.4.0
+        url: https://github.com/libsdl-org/SDL.git
+  - name: Skia
+    buildsystem: simple
+    build-commands:
+      - python3 tools/git-sync-deps
+      - bin/gn gen out/Static --args='is_official_build=true skia_use_system_expat=false skia_use_system_freetype2=true skia_use_system_harfbuzz=true skia_use_system_icu=true skia_use_system_libjpeg_turbo=false skia_use_system_libpng=true skia_use_system_libwebp=false skia_use_system_zlib=true skia_use_egl=true skia_use_x11=false'
+      - ninja -C out/Static skia svg skunicode_core skunicode_icu skparagraph skresources skshaper
+      - mkdir /app/Skia
+      - mv out /app/Skia
+      - mv include /app/Skia
+      - mv src /app/Skia
+      - mv modules /app/Skia
+    cleanup:
+      - '*'
+    sources:
+      - type: archive
+        url: https://github.com/google/skia/archive/da51f0d60ea2b14e845a823dc11b405dbeef42d8.zip
+        sha256: 1f5140d5908031d8cdd06429a633a1583b12fc43dc1c768374ed1e91ab9fa596
+  - name: infinipaint-x86_64
+    buildsystem: cmake-ninja
+    builddir: true
+    only-arches:
+        - x86_64
+    config-opts:
+        - -DNO_CONAN_BUILD=ON
+        - -DSKIA_INCLUDE=/app/Skia
+        - -DSKIA_LIB=/app/Skia/out/Static/libskia.a
+        - -DSKIA_SVG_LIB=/app/Skia/out/Static/libsvg.a
+        - -DSKIA_RESOURCES_LIB=/app/Skia/out/Static/libskresources.a
+        - -DSKIA_SHAPER_LIB=/app/Skia/out/Static/libskshaper.a
+        - -DSKIA_UNICODE_ICU_LIB=/app/Skia/out/Static/libskunicode_core.a
+        - -DSKIA_UNICODE_CORE_LIB=/app/Skia/out/Static/libskunicode_icu.a
+        - -DSKIA_PARAGRAPH_LIB=/app/Skia/out/Static/libskparagraph.a
+        - -DCMAKE_BUILD_TYPE=Release
+        - -DGRAPHICS_BACKEND=OpenGL3.3
+    sources:
+      - type: dir
+        # branch: master
+        path: ..
+  - name: infinipaint-aarch64
+    buildsystem: cmake-ninja
+    builddir: true
+    only-arches:
+        - aarch64
+    config-opts:
+        - -DNO_CONAN_BUILD=ON
+        - -DSKIA_INCLUDE=/app/Skia
+        - -DSKIA_LIB=/app/Skia/out/Static/libskia.a
+        - -DSKIA_SVG_LIB=/app/Skia/out/Static/libsvg.a
+        - -DSKIA_RESOURCES_LIB=/app/Skia/out/Static/libskresources.a
+        - -DSKIA_SHAPER_LIB=/app/Skia/out/Static/libskshaper.a
+        - -DSKIA_UNICODE_ICU_LIB=/app/Skia/out/Static/libskunicode_core.a
+        - -DSKIA_UNICODE_CORE_LIB=/app/Skia/out/Static/libskunicode_icu.a
+        - -DSKIA_PARAGRAPH_LIB=/app/Skia/out/Static/libskparagraph.a
+        - -DCMAKE_BUILD_TYPE=Release
+        - -DGRAPHICS_BACKEND=OpenGLES3.0
+    sources:
+      - type: dir
+        # branch: master
+        path: ..
+cleanup:
+  - /Skia
+  - /include
+  - /lib/pkgconfig
+  - /lib/cmake
+  - /lib/libupb.a
+  - /bin/proto*
+  - /lib/*.a
+  - /lib/libicui18n*
+  - /lib/libicudata*
+  - /bin/zstd*
+  - /bin/unzstd
+        
+finish-args:
+  - --share=ipc
+  - --socket=x11
+  - --device=all
+  - --share=network
+  - --filesystem=home

@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2026 Yousef Khadadeh -->
+<component type="desktop-application">
+    <id>com.infinipaint.infinipaint</id>
+    <name>Infinipaint</name>
+    <summary>Draw on a big canvas</summary>
+    <metadata_license>CC0-1.0</metadata_license>
+    <project_license>MIT</project_license>
+
+    <branding>
+        <color type="primary" scheme_preference="light">#83b9b2</color>
+        <color type="primary" scheme_preference="dark">#325652</color>
+    </branding>
+    
+    <url type="homepage">https://infinipaint.com</url>
+    <url type="vcs-browser">https://github.com/ErrorAtLine0/infinipaint</url>
+    <url type="bugtracker">https://github.com/ErrorAtLine0/infinipaint/issues</url>
+    <url type="donation">https://infinipaint.com/donate.html</url>
+    
+    <developer id="com.erroratline0">
+        <name>ErrorAtLine0</name>
+    </developer>
+    
+    <categories>
+        <category>Graphics</category>
+    </categories>
+    
+    <supports>
+        <control>pointing</control>
+        <control>keyboard</control>
+        <control>tablet</control>
+    </supports>
+    
+    <recommends>
+        <internet>always</internet>
+    </recommends>
+    
+    <description>
+        <p>
+            InfiniPaint is a collaborative, infinite space, infinite zoom, canvas note-taking/drawing app. Unlike many other infinite canvas apps, there is no zoom in or zoom out limit. This means that this app is very good at things such as drawing sketches of the solar system to scale, or just drawing any massive objects with tiny details. Of course, this app is also perfectly well suited for use as a normal canvas.
+        </p>
+        <p>Features:</p>
+        <ul>
+            <li>Infinite canvas, with infinite zoom</li>
+            <li>Open online lobbies for collaboration</li>
+            <li>Graphics tablet support (Pressure sensitive brush and eraser detection)</li>
+            <li>Layers with blend modes</li>
+            <li>Saveable color palettes</li>
+            <li>Right click to open a quick menu</li>
+            <li>Place bookmarks on the canvas to jump to later</li>
+            <li>Undo/Redo</li>
+            <li>Screenshot to export parts of the canvas to a picture (can export to raster formats or SVG)</li>
+            <li>Place text boxes with formatting</li>
+            <li>Other tools such as: Rectangle select tool, Lasso select tool, Color picker tool, Grid tool, Rectangle tool, Ellipse tool, Line tool</li>
+            <li>Copy and paste objects on the canvas, and between different canvases</li>
+            <li>Insert images and files on the canvas</li>
+        </ul>
+    </description>
+    
+    <launchable type="desktop-id">com.infinipaint.infinipaint.desktop</launchable>
+
+    <releases>
+        <release version="0.4.2" date="2026-03-28">
+            <description>
+                <p>Patch update:</p>
+                <ul>
+                    <li>Fixed "Integer division by zero" error when loading some files</li>
+                    <li>Brush, eraser, and selection tools change color depending on the objects behind them</li>
+                    <li>Clamp brush pressure to stop incompatible drivers from breaking InfiniPaint</li>
+                    <li>Added limit to image crop bounds</li>
+                </ul>
+            </description>
+        </release>
+        <release version="0.4.1" date="2026-02-09">
+            <description>
+                <p>Minor update:</p>
+                <ul>
+                    <li>Send objects to front or back of layer through right click popup menu</li>
+                    <li>Change color of outlines and brush strokes through selection tool</li>
+                    <li>Improved cache system increases FPS</li>
+                    <li>Popup menu to save files before closing</li>
+                    <li>Tool configuration is saved</li>
+                    <li>Lock brush/outline size from zoom</li>
+                    <li>Move selected objects with arrow keys</li>
+                    <li>Switch from pan to zoom when pen touches tablet</li>
+                    <li>Every tool has its own size value</li>
+                </ul>
+            </description>
+        </release>
+        <release version="0.4.0" date="2026-01-10">
+            <description>
+                <p>Major update:</p>
+                <ul>
+                    <li>Added layers, with support for layer folders, blend modes, and layer alpha</li>
+                    <li>Bookmarks can now be placed in folders</li>
+                    <li>Added line tool</li>
+                    <li>Improved network system increases performance on both client and server side</li>
+                    <li>Improved undo/redo system</li>
+                    <li>Images can be cropped</li>
+                    <li>Can now paste images from the clipboard</li>
+                </ul>
+            </description>
+        </release>
+        <release version="0.3.1" date="2025-12-02">
+            <description>
+                <p>Minor update:</p>
+                <ul>
+                    <li>Add right click popup menu for selection and text editing</li>
+                    <li>Added a brush minimum size option, and removed the change brush size with mouse speed option</li>
+                    <li>Fixed crash when pasting rich text in GUI textbox</li>
+                    <li>Fixed some GUI elements not responding after a while</li>
+                    <li>Fixed other players' cursors not being shown when they're very far away</li>
+                    <li>Added mouse double click and triple click text selection</li>
+                    <li>Can now type tabs into textboxes</li>
+                    <li>Replaced an embedded font</li>
+                </ul>
+            </description>
+        </release>
+        <release version="0.3.0" date="2025-11-23">
+            <description>
+                <p>Major update:</p>
+                <ul>
+                    <li>Unicode support across the entire app</li>
+                    <li>Text boxes now have many more formatting options</li>
+                    <li>UI theme changed</li>
+                    <li>Drag and drop direct URLs to images to download them onto the canvas</li>
+                    <li>Images/Resources that are being downloaded will show download progress</li>
+                    <li>Downloading resources won't completely stop other types of data from being sent</li>
+                    <li>VSync and display scaling options added</li>
+                </ul>
+            </description>
+        </release>
+        <release version="0.2.1" date="2025-10-29">
+            <description>
+                <p>Minor update:</p>
+                <ul>
+                    <li>Window scaling taken into account in some types of input (drag and drop files)</li>
+                    <li>Fixed program crashing when undoing an edit to an editable element (textbox, ellipse, rectangle)</li>
+                    <li>Fixed program crashing when zooming in/out too fast</li>
+                    <li>p2p.json is now accessible from the user configuration directory, allowing you to change the signaling server, STUN server, and TURN server list</li>
+                    <li>Text input is a bit more responsive</li>
+                </ul>
+            </description>
+        </release>
+        <release version="0.2.0" date="2025-10-07">
+            <description>
+                <p>Major update:</p>
+                <ul>
+                    <li>Can now infinitely zoom into the canvas</li>
+                    <li>Added a grid tool</li>
+                    <li>SVG screenshots can be taken</li>
+                    <li>Added a pan tool, zoom tool, and rotate wheel to the toolbar</li>
+                    <li>Edit tool can now be used to select single objects</li>
+                    <li>Rearranged parts of the UI</li>
+                    <li>Improved performance when drawing brushstrokes with transparency</li>
+                    <li>Network related bugfixes</li>
+                    <li>Clipboard related bugfixes</li>
+                </ul>
+            </description>
+        </release>
+        <release version="0.1.0" date="2025-08-08">
+            <description>
+                <p>Major update:</p>
+                <ul>
+                    <li>New cache system that leads to major performance improvements for canvases with many objects</li>
+                    <li>Lasso select tool added</li>
+                    <li>Savefiles are compressed, leading to smaller files</li>
+                    <li>Large network messages are compressed, leading to better online performance</li>
+                    <li>Can embed and display SVG files on the canvas</li>
+                    <li>Can display more raster image types: webp, wbmp</li>
+                    <li>Selection can be modified by holding left shift to add to selection, or holding left alt to remove from selection</li>
+                    <li>Can change canvas background color</li>
+                </ul>
+            </description>
+        </release>
+        <release version="0.0.4" date="2025-07-11">
+            <description>
+                <p>Added flatpak metainfo. Release is equivalent to previous version.</p>
+            </description>
+        </release>
+        <release version="0.0.3" date="2025-07-11">
+            <description>
+                <p>Added a button to upload an image/file to the canvas, as an alternative to drag drop.</p>
+            </description>
+        </release>
+        <release version="0.0.2" date="2025-07-10">
+            <description>
+                <p>Fixed a segmentation fault that occurred when clients disconnected from the server.</p>
+            </description>
+        </release>
+        <release version="0.0.1" date="2025-07-10">
+            <description>
+                <p>First release!</p>
+            </description>
+        </release>
+    </releases>
+
+    <screenshots>
+        <screenshot type="default">
+            <image>https://raw.githubusercontent.com/erroratline0/com.infinipaint.infinipaint/master/screenshots/zoom.png</image>
+            <caption>Welcome to InfiniPaint!</caption>
+        </screenshot>
+        <screenshot>
+            <image>https://raw.githubusercontent.com/erroratline0/com.infinipaint.infinipaint/master/screenshots/tablet.png</image>
+            <caption>Drawing tablet support</caption>
+        </screenshot>
+        <screenshot>
+            <image>https://raw.githubusercontent.com/erroratline0/com.infinipaint.infinipaint/master/screenshots/collab.png</image>
+            <caption>Host online lobbies</caption>
+        </screenshot>
+        <screenshot>
+            <image>https://raw.githubusercontent.com/erroratline0/com.infinipaint.infinipaint/master/screenshots/pictures.png</image>
+            <caption>Place images</caption>
+        </screenshot>
+        <screenshot>
+            <image>https://raw.githubusercontent.com/erroratline0/com.infinipaint.infinipaint/master/screenshots/layers.png</image>
+            <caption>Layers with blend modes</caption>
+        </screenshot>
+        <screenshot>
+            <image>https://raw.githubusercontent.com/erroratline0/com.infinipaint.infinipaint/master/screenshots/bookmark.png</image>
+            <caption>Create bookmarks</caption>
+        </screenshot>
+        <screenshot>
+            <image>https://raw.githubusercontent.com/erroratline0/com.infinipaint.infinipaint/master/screenshots/rotate.png</image>
+            <caption>Right click quick menu</caption>
+        </screenshot>
+        <screenshot>
+            <image>https://raw.githubusercontent.com/erroratline0/com.infinipaint.infinipaint/master/screenshots/textbox.png</image>
+            <caption>Textbox element</caption>
+        </screenshot>
+    </screenshots>
+
+    <content_rating type="oars-1.0">
+        <content_attribute id="social-chat">intense</content_attribute>
+    </content_rating>
+</component>
