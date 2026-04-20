@@ -37,3 +37,17 @@ google-services.json
 .env
 .env.*
 !.env.example
+
+# Flutter / Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+pubspec.lock
+*.g.dart
+*.freezed.dart
+doc/api/
+
+# Flutter build outputs
+build/
+
